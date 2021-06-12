@@ -1,7 +1,9 @@
 // A Scientific Calculator
+#include <cstdio>
+#include <exception>
 #include <iostream>
 #include <string>
-#include <cstdio>
+
 #include "parser/parser.h"
 
 int main() {
@@ -12,10 +14,21 @@ int main() {
     std::getline(std::cin, expr);
 
     CalculatorParser parser;
-    std::deque<Token> tokens = parser.tokenize(expr);
-
-    for(const Token& token: tokens) {
-        std::cout << token.str << std::endl;
+    try {
+        std::deque<Token> tokens = parser.tokenize(expr);
+        for(const Token& token: tokens) {
+            std::cout << token.str << std::endl;
+        }
     }
+    catch (...) {
+        try {
+            throw;
+        }
+        catch(std::out_of_range& e) {
+             std::cout << e.what() << std::endl;
+        }
+        
+    }
+
     return 0;   
 }
