@@ -1,6 +1,7 @@
 #include <deque>
-#include <string>
 #include <iostream>
+#include <stack>
+#include <string>
 
 class Token {
     public:

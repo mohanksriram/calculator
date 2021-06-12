@@ -16,8 +16,13 @@ int main() {
     CalculatorParser parser;
     try {
         std::deque<Token> tokens = parser.tokenize(expr);
-        for(const Token& token: tokens) {
-            std::cout << token.str << std::endl;
+        std::deque<Token> rpn_tokens = parser.rpn(tokens);
+
+        // for(const Token& token: tokens) {
+        //     std::cout << token.str << std::endl;
+        // }
+        for(int i = 0, size = rpn_tokens.size(); i < size; ++i) {
+            std::cout << rpn_tokens[i].str << (i < size-1 ? " ": "\n"); 
         }
     }
     catch (...) {
@@ -27,7 +32,6 @@ int main() {
         catch(std::out_of_range& e) {
              std::cout << e.what() << std::endl;
         }
-        
     }
 
     return 0;   

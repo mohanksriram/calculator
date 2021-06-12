@@ -68,5 +68,73 @@ std::deque<Token> CalculatorParser::tokenize(const std::string& expr) {
 
 std::deque<Token> CalculatorParser::rpn(const std::deque<Token>& tokens) {
     std::deque<Token> rpn_tokens;
+    std::stack<Token> operators;
+    
+    int count = 0;
+    for(const Token& token: tokens) {
+        count++;
+        switch (token.type)
+        {
+            case Token::Type::Number:
+                rpn_tokens.push_back(token);
+                break;
+            
+            case Token::Type::Operator:
+                while(!operators.empty()) {
+                    Token op2 = operators.top();
+                    Token op1 = token;
+                    if(op2.type != Token::Type::Operator) break;
+                    if ((!op1.right_associative && op1.precedence <= op2.precedence) ||
+                        (op1.right_associative && op1.precedence < op2.precedence)) {
+                            // push top token 
+                            rpn_tokens.push_back(op2);
+                            operators.pop();
+                    } else {
+                        // no operator on stack with higher precendence
+                        break;
+                    }
+                }
+                operators.push(token);
+                break;
+            
+            case Token::Type::LeftBrace:
+                operators.push(token);
+                break;
+
+            case Token::Type::RightBrace:
+                // evaluate until we reach a left bracket
+                while(!operators.empty() && operators.top().type != Token::Type::LeftBrace) {
+                    Token op = operators.top();
+                    
+                    rpn_tokens.push_back(op);
+                    operators.pop();
+                }
+                if(operators.empty() && count < (int)tokens.size()) {
+                    throw std::out_of_range("Mismatched paranthesis. Please try again!");
+                }
+                // std::cout << operators.top().str << std::endl;
+                // drop the left bracket
+                if(!operators.empty()) {
+                    operators.pop();
+                }
+                break;
+        default:
+            break;
+        }
+    }
+    while(!operators.empty()) {
+        Token op = operators.top();
+        operators.pop();
+        if(op.type == Token::Type::LeftBrace || op.type == Token::Type::RightBrace) {
+            throw std::out_of_range("Mismatched paranthesis. Please try again!");
+        }
+
+        if(rpn_tokens.size() < 2) {
+            throw std::out_of_range("Mismatched operands. Please try again!");
+        }
+
+        rpn_tokens.push_back(op);
+    }
+
     return rpn_tokens;
 }
