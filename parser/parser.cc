@@ -5,6 +5,10 @@ bool isTrignometric(const std::string& str) {
     return ((str == "sin") || (str == "cos") || (str == "tan"));
 }
 
+bool isLogarithmic(const std::string& str) {
+    return ((str == "log") || (str == "ln"));
+}
+
 Token::Token(Type t, const std::string& s, int precedence = -1, bool ra = false)
     : type{t}, str{s}, precedence{precedence}, right_associative{ra} {}
 
@@ -32,8 +36,8 @@ std::deque<Token> CalculatorParser::tokenize(const std::string& expr) {
                     ++p;
                 }
                 const std::string str = std::string(base, p);
-                if(isTrignometric(str)) {
-                    tokens.push_back(Token{Token::Type::Function, str});
+                if(isTrignometric(str) || isLogarithmic(str)) {
+                    tokens.push_back(Token{Token::Type::UnaryFunc, str});
                 } else {
                     throw std::out_of_range("You have entered an invalid function. Please try again!");
                 }
@@ -98,7 +102,7 @@ std::deque<Token> CalculatorParser::rpn(const std::deque<Token>& tokens) {
                 rpn_tokens.push_back(token);
                 break;
             
-            case Token::Type::Function:
+            case Token::Type::UnaryFunc:
                 operators.push(token);
                 break;
             
@@ -143,7 +147,7 @@ std::deque<Token> CalculatorParser::rpn(const std::deque<Token>& tokens) {
                 // check if function is at the top of the operator stack
                 if(!operators.empty()) {
                     Token top_op = operators.top();
-                    if(top_op.type == Token::Type::Function) {
+                    if(top_op.type == Token::Type::UnaryFunc) {
                         rpn_tokens.push_back(top_op);
                     }
                     operators.pop();

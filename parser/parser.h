@@ -13,7 +13,7 @@ class Token {
             Unknown,
             Number,
             Operator,
-            Function,
+            UnaryFunc,
             LeftBrace,
             RightBrace
         };
