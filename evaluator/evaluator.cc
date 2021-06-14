@@ -14,7 +14,7 @@ struct UnaryContract {
     UnaryContract(UnaryFuncs f): func{f} {}
 };
 
-static std::map<std::string, UnaryContract> trig_contracts = {
+static std::map<std::string, UnaryContract> unary_contracts = {
     {"sin", UnaryContract([](const double &a) { return sin(a); })},
     {"cos", UnaryContract([](const double &a) { return cos(a); })},
     {"tan", UnaryContract([](const double &a) { return tan(a); })},
@@ -64,8 +64,8 @@ double Evaluator::evaluate(std::deque<Token> rpn_tokens) {
                 Token operand1 = number_tokens.top();
                 number_tokens.pop();
 
-                std::map<std::string, UnaryContract>::iterator search = trig_contracts.find(op.str);
-                if (search != trig_contracts.end()) {
+                std::map<std::string, UnaryContract>::iterator search = unary_contracts.find(op.str);
+                if (search != unary_contracts.end()) {
                     // Evaluate with function pointer
                     double val = search->second.func(std::stod(operand1.str));
                     const std::string str = std::to_string(val);
