@@ -1,3 +1,4 @@
+#include <cmath>
 #include "parser.h"
 
 // helper functions
@@ -7,6 +8,10 @@ bool isTrignometric(const std::string& str) {
 
 bool isLogarithmic(const std::string& str) {
     return ((str == "log") || (str == "ln"));
+}
+
+bool isConstant(const std::string& str) {
+    return ((str == "pi") || (str == "e"));
 }
 
 Token::Token(Type t, const std::string& s, int precedence = -1, bool ra = false)
@@ -29,7 +34,7 @@ std::deque<Token> CalculatorParser::tokenize(const std::string& expr) {
             // point back to the last digit of the number
             --p;
         } else if(isalpha(*p)) {
-            // TODO(Mohan): Handle trignometric, log functions, constants, and variables here.
+            // TODO(Mohan): Handle variables here.
                 const char* base = p;
                 // consider all consective digits as a single number token
                 while(isalpha(*p)) {
@@ -38,6 +43,8 @@ std::deque<Token> CalculatorParser::tokenize(const std::string& expr) {
                 const std::string str = std::string(base, p);
                 if(isTrignometric(str) || isLogarithmic(str)) {
                     tokens.push_back(Token{Token::Type::UnaryFunc, str});
+                } else if(isConstant(str)) {
+                    tokens.push_back(Token{Token::Type::Constant, str});
                 } else {
                     throw std::out_of_range("You have entered an invalid function. Please try again!");
                 }
@@ -101,7 +108,15 @@ std::deque<Token> CalculatorParser::rpn(const std::deque<Token>& tokens) {
             case Token::Type::Number:
                 rpn_tokens.push_back(token);
                 break;
-            
+
+            case Token::Type::Constant:
+                if(token.str == "pi") {
+                    rpn_tokens.push_back(Token{Token::Type::Number, std::to_string(M_PI)});
+                } else if(token.str == "e") {
+                    rpn_tokens.push_back(Token{Token::Type::Number, std::to_string(M_E)});
+                }
+                break;
+                
             case Token::Type::UnaryFunc:
                 operators.push(token);
                 break;

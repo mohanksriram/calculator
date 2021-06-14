@@ -12,6 +12,7 @@ class Token {
         enum class Type {
             Unknown,
             Number,
+            Constant,
             Operator,
             UnaryFunc,
             LeftBrace,

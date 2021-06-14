@@ -15,11 +15,11 @@ struct UnaryContract {
 };
 
 static std::map<std::string, UnaryContract> trig_contracts = {
-    {"sin", UnaryContract([](const double &a) { return sin(a*M_PI/180); })},
-    {"cos", UnaryContract([](const double &a) { return cos(a*M_PI/180); })},
-    {"tan", UnaryContract([](const double &a) { return tan(a*M_PI/180); })},
+    {"sin", UnaryContract([](const double &a) { return sin(a); })},
+    {"cos", UnaryContract([](const double &a) { return cos(a); })},
+    {"tan", UnaryContract([](const double &a) { return tan(a); })},
     {"log", UnaryContract([](const double &a) { return log10(a); })},
-    {"ln", UnaryContract([](const double &a) { return log(a); })},
+    {"ln",  UnaryContract([](const double &a) { return log(a); })},
 };
 
 static std::map<std::string, OperatorContract> op_contracts = {
