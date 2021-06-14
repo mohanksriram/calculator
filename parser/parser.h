@@ -1,3 +1,7 @@
+#ifndef PARSER_H
+#define PARSER_H
+
+
 #include <deque>
 #include <iostream>
 #include <stack>
@@ -9,6 +13,7 @@ class Token {
             Unknown,
             Number,
             Operator,
+            Function,
             LeftBrace,
             RightBrace
         };
@@ -30,3 +35,5 @@ class CalculatorParser: Parser {
         std::deque<Token> tokenize(const std::string& expr) override;
         std::deque<Token> rpn(const std::deque<Token>& tokens) override;
 };
+
+#endif

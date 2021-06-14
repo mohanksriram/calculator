@@ -5,6 +5,7 @@
 #include <string>
 
 #include "parser/parser.h"
+#include "evaluator/evaluator.h"
 
 int main() {
     std::cout << "Welcome to Calculator!" << "\n";
@@ -14,6 +15,8 @@ int main() {
     std::getline(std::cin, expr);
 
     CalculatorParser parser;
+    Evaluator evaluator;
+    
     try {
         std::deque<Token> tokens = parser.tokenize(expr);
         std::deque<Token> rpn_tokens = parser.rpn(tokens);
@@ -21,9 +24,11 @@ int main() {
         // for(const Token& token: tokens) {
         //     std::cout << token.str << std::endl;
         // }
-        for(int i = 0, size = rpn_tokens.size(); i < size; ++i) {
-            std::cout << rpn_tokens[i].str << (i < size-1 ? " ": "\n"); 
-        }
+        // for(int i = 0, size = rpn_tokens.size(); i < size; ++i) {
+        //     std::cout << rpn_tokens[i].str << (i < size-1 ? " ": "\n"); 
+        // }
+        double res = evaluator.evaluate(rpn_tokens);
+        std::cout << "res: " << res << std::endl;
     }
     catch (...) {
         try {

@@ -1,5 +1,10 @@
 #include "parser.h"
 
+// helper functions
+bool isTrignometric(const std::string& str) {
+    return ((str == "sin") || (str == "cos") || (str == "tan"));
+}
+
 Token::Token(Type t, const std::string& s, int precedence = -1, bool ra = false)
     : type{t}, str{s}, precedence{precedence}, right_associative{ra} {}
 
@@ -12,15 +17,27 @@ std::deque<Token> CalculatorParser::tokenize(const std::string& expr) {
         } else if(isdigit(*p)) {
             const char* base = p;
             // consider all consective digits as a single number token
-            while(isdigit(*p)) {
+            while(isdigit(*p) || *p == '.') {
                 ++p;
             }
             const std::string str = std::string(base, p);
             tokens.push_back(Token{Token::Type::Number, str});
             // point back to the last digit of the number
             --p;
-        //} else if(isalpha(*p)) {
-            // TODO(Mohan): Handle trignometric, log functions, constants, and variables here. 
+        } else if(isalpha(*p)) {
+            // TODO(Mohan): Handle trignometric, log functions, constants, and variables here.
+                const char* base = p;
+                // consider all consective digits as a single number token
+                while(isalpha(*p)) {
+                    ++p;
+                }
+                const std::string str = std::string(base, p);
+                if(isTrignometric(str)) {
+                    tokens.push_back(Token{Token::Type::Function, str});
+                } else {
+                    throw std::out_of_range("You have entered an invalid function. Please try again!");
+                }
+                --p;
         } else {
             Token::Type t = Token::Type::Unknown;
             int precendence = -1;
@@ -53,6 +70,8 @@ std::deque<Token> CalculatorParser::tokenize(const std::string& expr) {
                     t = Token::Type::Operator;
                     precendence = 2;
                     break;
+                default:
+                    break;
             }
             // exit with error if the token is unknown
             if(t == Token::Type::Unknown) {
@@ -77,6 +96,10 @@ std::deque<Token> CalculatorParser::rpn(const std::deque<Token>& tokens) {
         {
             case Token::Type::Number:
                 rpn_tokens.push_back(token);
+                break;
+            
+            case Token::Type::Function:
+                operators.push(token);
                 break;
             
             case Token::Type::Operator:
@@ -115,6 +138,14 @@ std::deque<Token> CalculatorParser::rpn(const std::deque<Token>& tokens) {
                 // std::cout << operators.top().str << std::endl;
                 // drop the left bracket
                 if(!operators.empty()) {
+                    operators.pop();
+                }
+                // check if function is at the top of the operator stack
+                if(!operators.empty()) {
+                    Token top_op = operators.top();
+                    if(top_op.type == Token::Type::Function) {
+                        rpn_tokens.push_back(top_op);
+                    }
                     operators.pop();
                 }
                 break;

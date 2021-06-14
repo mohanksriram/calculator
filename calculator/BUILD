@@ -5,5 +5,6 @@ cc_binary(
     srcs = ["calculator.cc"],
     deps = [
         "//parser:parser",
+        "//evaluator:evaluator",
     ],
 )
