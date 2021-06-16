@@ -87,5 +87,9 @@ double Evaluator::evaluate(std::deque<Token> rpn_tokens) {
             throw std::out_of_range("Mismatched operators. Please try again!"); 
         }
     }
-    return std::stod(number_tokens.top().str);
+    if (number_tokens.size() == 1) {
+        return std::stod(number_tokens.top().str);
+    } else {
+        throw std::out_of_range("Invalid postfix expression. Please try again!");
+    }
 }

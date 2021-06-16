@@ -164,8 +164,8 @@ std::deque<Token> CalculatorParser::rpn(const std::deque<Token>& tokens) {
                     Token top_op = operators.top();
                     if(top_op.type == Token::Type::UnaryFunc) {
                         rpn_tokens.push_back(top_op);
+                        operators.pop();
                     }
-                    operators.pop();
                 }
                 break;
         default:

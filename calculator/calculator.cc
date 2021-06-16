@@ -8,6 +8,8 @@
 #include "parser/parser.h"
 #include "evaluator/evaluator.h"
 
+#define DEBUG 0
+
 int main() {
     std::cout << "Welcome to Calculator!" << "\n";
     std::cout << "Please enter the mode of operation " << "\n";
@@ -25,10 +27,17 @@ int main() {
     double res = 0.0;
     try {
         std::deque<Token> tokens = parser.tokenize(expr);
+        if (DEBUG) {
+            for(int i = 0, size = tokens.size(); i < size; ++i) {
+                    std::cout << tokens[i].str << (i < size-1 ? " ": "\n"); 
+            }
+        }
         if(mode == "1") {
             std::deque<Token> rpn_tokens = parser.rpn(tokens);
-            for(int i = 0, size = rpn_tokens.size(); i < size; ++i) {
-                std::cout << rpn_tokens[i].str << (i < size-1 ? " ": "\n"); 
+            if (DEBUG) {
+                for(int i = 0, size = rpn_tokens.size(); i < size; ++i) {
+                    std::cout << rpn_tokens[i].str << (i < size-1 ? " ": "\n"); 
+                }
             }
             res = evaluator.evaluate(rpn_tokens);
         } else {
@@ -37,9 +46,6 @@ int main() {
         
         std::cout << "res: " << res << std::endl;
 
-        // for(const Token& token: tokens) {
-        //     std::cout << token.str << std::endl;
-        // }
     }
     catch (...) {
         try {
